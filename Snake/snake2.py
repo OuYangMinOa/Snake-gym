@@ -1,15 +1,16 @@
-import gymnasium as gym
-from gymnasium import spaces
-import numpy as np
-import cv2
-from PIL import Image
 import time
+import numpy as np
+import gymnasium as gym
+
+from PIL import Image
+from gymnasium import spaces
 from collections import deque
+from utils.reward_sacling import RewardScaling
 
 
 ENV_X = 20
 ENV_Y = 20
-MAX_SNAKE_LENGTH = 30
+MAX_SNAKE_LENGTH = ENV_X * ENV_Y
 
 class SNAKE(gym.Env):
     """Custom Environment that follows gym interface"""
@@ -17,15 +18,24 @@ class SNAKE(gym.Env):
 
     def __init__(self):
         super(SNAKE, self).__init__()
-        self.action_space = spaces.Discrete(3)
-        self.observation_space = spaces.Box(low=0, high=ENV_Y,shape=(12,), dtype=np.float64)
 
+        self.reward_scale = 1
+        self.apple_reward = 50
+        self.action_space = spaces.Discrete(3)
+        self.observation_space = spaces.Box(low=0, high=ENV_Y,shape=(MAX_SNAKE_LENGTH * 2 + 12,), dtype=np.float64)
+
+        self.use_reward_scaling = True
+        self.reward_scaler = RewardScaling(shape = 1,gamma=0.99)
+        
+    def do_reward_scale(self,x):
+        if (self.use_reward_scaling):
+            return self.reward_scaler(x)
+        return x
+    
     def snake_len(self):
         return len(self.body)
 
     def step(self, action):
-
-
         if (action==0):
             self.direction += 3
         if (action==2):
@@ -43,8 +53,9 @@ class SNAKE(gym.Env):
         head_x, head_y = self.body[0]
 
         reward  = 0
-        reward -= self.steps
-        reward -= np.sqrt( (head_x-self.apple_x)**2+(head_y-self.apple_y)**2) / 10
+        # reward -= self.steps * 0.1
+        reward -= np.sqrt( (head_x-self.apple_x)**2+(head_y-self.apple_y)**2) * self.reward_scale
+        self.steps += 1
 
         if (head_x <0 or head_x >=ENV_X):
             self.done = True
@@ -61,22 +72,21 @@ class SNAKE(gym.Env):
 
         if (head_x==self.apple_x and head_y==self.apple_y):
             self.score   += 1
-            reward  += 50 *self.score
+            self.steps    = 0
+            reward        = self.apple_reward * self.score
             tail = self.body[-1]
             self.body.append(tail)
             self.apple()
 
         # if (self.steps==1000):
         #     done = False
-
         info = {}
-        return self.get_state(), reward, self.done, False, info
+        return self.get_state(), reward, self.do_reward_scale(self.done), False, info
 
     def get_state(self):
         head_x, head_y = self.body[0]
         up_y     , down_y = head_y, ENV_Y - head_y
         left_x  , right_x = head_x, ENV_X - head_x
-
 
         for bx,by in self.body[1:]:
             if (bx == head_x):
@@ -94,7 +104,12 @@ class SNAKE(gym.Env):
                 elif (distance < left_x):
                     left_x = abs(distance)
 
-        return np.array([self.direction, len(self.body)
+        last_30 = list(np.array(self.body).flatten())
+        this_len = len(last_30)
+        if ( this_len < MAX_SNAKE_LENGTH):
+            last_30.extend([0 for i in range(2 * MAX_SNAKE_LENGTH-this_len)])
+
+        return np.array(last_30 + [self.direction, len(self.body)
 ,head_x, head_y, self.apple_x, self.apple_y, self.body[-1][0], self.body[-1][1], up_y, down_y, left_x  , right_x] ).astype(np.float64)
 
 
@@ -105,7 +120,9 @@ class SNAKE(gym.Env):
             self.apple_x = np.random.randint(0,ENV_X-1)
             self.apple_y = np.random.randint(0,ENV_Y-1)
 
-    def reset(self, seed=None, options=None):
+    def reset(self,seed=None, **kwargs):
+        super().reset(**kwargs)
+
         self.x    = ENV_X//2
         self.y    = ENV_Y//2
         self.body = [(self.x,self.y),(self.x,self.y-1),(self.x,self.y-2)]
@@ -118,8 +135,6 @@ class SNAKE(gym.Env):
 
         # for i in range(MAX_SNAKE_LENGTH-3):
         #     self.path_body.append(-1)
-
-
         #  randomize apple
         self.apple()
 
@@ -127,6 +142,8 @@ class SNAKE(gym.Env):
 
 
     def render(self, mode='human'):
+        import cv2
+
         SNAKE_COLOR = (255,255,255)
         SNAKE_COLOR_HEAD  = (0,255,0)
         APPLE_COLOR = (0,0,255)
@@ -136,21 +153,16 @@ class SNAKE(gym.Env):
 
 
         cv2.circle(env,
-              (self.apple_x*30+15,self.apple_y*30+15),15
+            (self.apple_x*30+15,self.apple_y*30+15),15
             ,(0,0,255),-1)
-
 
 
         cv2.rectangle(env,(self.body[0][0]*30,self.body[0][1]*30),(self.body[0][0]*30+30,self.body[0][1]*30+30),SNAKE_COLOR_HEAD,8)
         for position in self.body[1:]:
             cv2.rectangle(env,(position[0]*30,position[1]*30),(position[0]*30+30,position[1]*30+30),SNAKE_COLOR,8)
 
-
         cv2.imshow('img',env)
         
-
-
-
         t_end = time.time() + 0.05
         k = -1
         while time.time() < t_end:
@@ -159,19 +171,15 @@ class SNAKE(gym.Env):
             else:
                 continue
 
-
-            
-
-
     def close (self):
         self.done = False
-
-
 
 
 if __name__ == "__main__":
     from stable_baselines3.common.env_checker import check_env
 
     env = SNAKE()
-    
+
     check_env(env)
+
+    print(env.get_state())
