@@ -3,7 +3,7 @@ from Snake.snake2 import SNAKE as snake2
 from dataclasses import dataclass
 
 from config.config_base import ConfigBase
-from model.model1 import model1
+from model.model1 import model1, CustomActorCriticPolicy2
 
 
 

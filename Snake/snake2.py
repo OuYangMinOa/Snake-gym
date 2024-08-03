@@ -81,7 +81,7 @@ class SNAKE(gym.Env):
         # if (self.steps==1000):
         #     done = False
         info = {}
-        return self.get_state(), reward, self.do_reward_scale(self.done), False, info
+        return self.get_state(), self.do_reward_scale(reward), self.done, False, info
 
     def get_state(self):
         head_x, head_y = self.body[0]

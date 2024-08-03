@@ -102,7 +102,7 @@ class Trainler:
             obs, _ = env.reset()
             done = False
             while not done:
-                action, _ = model.predict(obs, deterministic=True )
+                action, _ = model.predict(obs, deterministic=False )
                 obs, reward, _, done, _ = env.step(action)
                 print(action, reward, done)
                 env.render()
