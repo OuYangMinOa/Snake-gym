@@ -1,5 +1,7 @@
 from Snake.snake  import SNAKE as snake1
 from Snake.snake2 import SNAKE as snake2
+from Snake.snake3 import SNAKE as snake3
+
 from dataclasses import dataclass
 
 from config.config_base import ConfigBase
@@ -115,6 +117,18 @@ class config11(ConfigBase):
     MODEL_NAME = "MODEL1_3"
     SNAKE_OBJ = snake2
     ENV_NAME  = "snake2"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+
+class config12(ConfigBase):
+    TB_LOG_NAME   = "No_obs_norm_rew_norm"
+    MODEL = model1_2
+    MODEL_NAME = "MODEL1_2"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
 
     USE_REW_NORM  = True
     USE_REW_SCALE = False
