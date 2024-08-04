@@ -2,7 +2,6 @@ import time
 import numpy as np
 import gymnasium as gym
 
-from PIL import Image
 from gymnasium import spaces
 from collections import deque
 from utils.reward_sacling import RewardScaling

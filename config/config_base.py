@@ -22,7 +22,7 @@ class ConfigBase:
     ENT_COEF      = 0.01
     TIME_STEPS    = 2000
     CLIP_OBS      = 10
-    ENV_NUMS      = 10
+    ENV_NUMS      = 5
     LEARN_RATE    = 3e-4
     BATCH_SIZE    = 64
     MODEL_SEED    = 1

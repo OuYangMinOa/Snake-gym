@@ -34,7 +34,7 @@ class Trainler:
         return model_path
 
     def build_env(self):
-        env = DummyVecEnv([self.make_env() for _ in range(self.config.ENV_NUMS)])
+        env = SubprocVecEnv([self.make_env() for _ in range(self.config.ENV_NUMS)])
         env = VecMonitor(env)
         env = VecNormalize( venv        = env, 
                             norm_obs    = self.config.USE_OBS_NORM,
@@ -52,12 +52,14 @@ class Trainler:
                             gamma       = self.config.GAMMA,)
         return env
 
-    def build_model(self):
+    def build_model(self, env = None):
+        if env is None:
+            env = self.build_env()
         model_path = self.get_last_model()
         if (model_path):
             print(f"Load model : {model_path}")
             model = PPO.load(path           = model_path, 
-                            env             = self.build_env(), 
+                            env             = env, 
                             gamma           = self.config.GAMMA,
                             n_steps         = self.config.N_STEPS,
                             tensorboard_log = self.config.LOG_DIR,
@@ -69,7 +71,7 @@ class Trainler:
         else:
             print(f"Create new model")
             model = PPO(policy          = self.config.MODEL, 
-                        env             = self.build_env(), 
+                        env             = env, 
                         gamma           = self.config.GAMMA,
                         n_steps         = self.config.N_STEPS,
                         tensorboard_log = self.config.LOG_DIR,
@@ -93,27 +95,17 @@ class Trainler:
             model.save(f"{self.config.MODEL_DIR}/{self.config.TIME_STEPS*iters}")
 
     def test(self):
-        import cv2
-
         while True:
             env   = self.build_single_env()
+            model = self.build_model(env=env)
             env   = env.unwrapped.envs[0]
-            model = self.build_model()
             obs, _ = env.reset()
             done = False
             while not done:
                 action, _ = model.predict(obs, deterministic=False )
-                obs, reward, _, done, _ = env.step(action)
+                obs, reward, done, _, _ = env.step(action)
                 print(action, reward, done)
                 env.render()
-
-                if cv2.waitKey(30) & 0xFF == ord('q'):
-                    break
-
-                time.sleep(1/60)
-
-                
-        
 
 
 
