@@ -256,3 +256,41 @@ class config22(ConfigBase):
     USE_REW_NORM  = True
     USE_REW_SCALE = False
     USE_OBS_NORM  = False
+
+
+
+    
+class config23(ConfigBase):
+    TB_LOG_NAME   = "No_obs_no_rew_norm"
+    MODEL = model1_3
+    MODEL_NAME = "model1_3"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = False
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+
+class config24(ConfigBase):
+    TB_LOG_NAME   = "No_obs_rew_norm"
+    MODEL = model1_5_softsign
+    MODEL_NAME = "model1_5_softsign"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+
+class config25(ConfigBase):
+    TB_LOG_NAME   = "No_obs_rew_norm"
+    MODEL = model1_3_Softsign
+    MODEL_NAME = "model1_3_Softsign"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
