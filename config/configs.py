@@ -5,7 +5,8 @@ from Snake.snake3 import SNAKE as snake3
 from dataclasses import dataclass
 
 from config.config_base import ConfigBase
-from model.model1 import model1, model1_2, model1_3, model1_4
+from model.model1 import *
+from model.model2 import *
 
 
 
@@ -152,6 +153,103 @@ class config14(ConfigBase):
     TB_LOG_NAME   = "No_obs_norm_rew_norm"
     MODEL = model1_4
     MODEL_NAME = "MODEL1_4"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+
+class config15(ConfigBase):
+    TB_LOG_NAME   = "No_obs_norm_rew_norm"
+    MODEL = model1_5
+    MODEL_NAME = "MODEL1_5"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+
+class config16(ConfigBase):
+    TB_LOG_NAME   = "No_obs_norm_rew_norm"
+    MODEL = model1_6
+    MODEL_NAME = "MODEL1_6"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+
+    
+class config17(ConfigBase):
+    TB_LOG_NAME   = "No_obs_norm_rew_norm"
+    MODEL = model1_3_mish
+    MODEL_NAME = "MODEL1_3_mish"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+class config18(ConfigBase):
+    TB_LOG_NAME   = "No_obs_norm_rew_norm"
+    MODEL = model1_3_lkrelu
+    MODEL_NAME = "MODEL1_3_lkrelu"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+
+    
+class config19(ConfigBase):
+    TB_LOG_NAME   = "No_obs_norm_rew_norm"
+    MODEL = model1_5_relu
+    MODEL_NAME = "MODEL1_5_relu"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+
+class config20(ConfigBase):
+    TB_LOG_NAME   = "No_obs_norm_rew_norm"
+    MODEL = model1_5_tanh
+    MODEL_NAME = "MODEL1_5_tanh"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = False
+    USE_OBS_NORM  = False
+
+class config21(ConfigBase):
+    TB_LOG_NAME   = "No_obs_both_rew"
+    MODEL = model1_5
+    MODEL_NAME = "MODEL1_5"
+    SNAKE_OBJ = snake3
+    ENV_NAME  = "snake3"
+
+    USE_REW_NORM  = True
+    USE_REW_SCALE = True
+    USE_OBS_NORM  = False
+
+
+
+class config22(ConfigBase):
+    TB_LOG_NAME   = "No_obs_rew_norm"
+    MODEL = model2_1
+    MODEL_NAME = "MODEL2_1"
     SNAKE_OBJ = snake3
     ENV_NAME  = "snake3"
 

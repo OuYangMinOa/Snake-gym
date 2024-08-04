@@ -26,6 +26,7 @@ class ConfigBase:
     LEARN_RATE    = 3e-4
     BATCH_SIZE    = 64
     MODEL_SEED    = 1
+    ENV_GEN_SEED  = 1
 
     REWARD_SCALE  = 0.1
     APPLE_REWARD  = 50

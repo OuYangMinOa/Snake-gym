@@ -11,18 +11,22 @@ import time
 from config.config_base import ConfigBase
 from glob import glob
 
+import random
+
 
 class Trainler:
     def __init__(self, config : ConfigBase) -> None:
         self.config = config
 
+        random.seed(self.config.ENV_GEN_SEED)
 
     def make_env(self):
         def _init():
             env                    = self.config.SNAKE_OBJ()
             env.use_reward_scaling = self.config.REWARD_SCALE
             env.apple_reward       = self.config.APPLE_REWARD
-            env.reset()
+            seed                   = random.randint(0,2147483647)
+            env.reset(seed=seed)
             return env
         return _init
 

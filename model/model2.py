@@ -7,7 +7,6 @@ import torch as th
 from stable_baselines3.common.policies import ActorCriticPolicy
 from stable_baselines3 import PPO
 
-
 class CustomNetwork(nn.Module):
     def __init__(
         self,
@@ -18,38 +17,39 @@ class CustomNetwork(nn.Module):
         super().__init__()
         self.latent_dim_pi = last_layer_dim_pi
         self.latent_dim_vf = last_layer_dim_vf
-
-        self.Snake_lstm = nn.LSTM(2,2,4)
+        self.Snake_lstm = nn.GRU(2,2,4)
         self.lstm_dnn = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(800,256), nn.Tanh(),
-            nn.Linear(256,128), nn.Tanh(),
+            nn.Linear(800,256), nn.Mish(),
+            nn.Linear(256,256), nn.Mish(),
+            nn.Linear(256,256), nn.Mish(),
+            nn.Linear(256,256), nn.Mish(),
+            nn.Linear(256,128), nn.Mish(),
             nn.Linear(128,10)
         )
-
         feature_dim = feature_dim - 800 + 10
-
         # Policy network
         self.policy_net = nn.Sequential(
-            nn.Linear(feature_dim, 256), nn.Tanh(),
-            nn.Linear(256,256), nn.Tanh(),
-            nn.Linear(256,256), nn.Tanh(),
-            nn.Linear(256,256), nn.Tanh(),
-            nn.Linear(256,256), nn.Tanh(),
-            nn.Linear(256,128), nn.Tanh(),
-            nn.Linear(128,last_layer_dim_pi)
+            nn.Linear(feature_dim, 512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,last_layer_dim_pi)
         )
-
         # Value network
         self.value_net = nn.Sequential(
-            nn.Linear(feature_dim, 256), nn.Tanh(),
-            nn.Linear(256,256), nn.Tanh(),
-            nn.Linear(256,256), nn.Tanh(),
-            nn.Linear(256,256), nn.Tanh(),
-            nn.Linear(256,128), nn.Tanh(),
-            nn.Linear(128,last_layer_dim_pi)
+            nn.Linear(feature_dim, 512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,512), nn.Mish(),
+            nn.Linear(512,last_layer_dim_pi)
         )
-
     def forward(self, features: th.Tensor) -> Tuple[th.Tensor, th.Tensor]:
         return self.forward_actor(features), self.forward_critic(features)
 
@@ -67,7 +67,7 @@ class CustomNetwork(nn.Module):
         model_input =  th.hstack([x1, features[:,800:]])
         return self.value_net(model_input)
 
-class model1(ActorCriticPolicy):
+class model2_1(ActorCriticPolicy):
     def __init__(
         self,
         observation_space: spaces.Space,
@@ -90,5 +90,4 @@ class model1(ActorCriticPolicy):
 
     def _build_mlp_extractor(self) -> None:
         self.mlp_extractor = CustomNetwork(self.features_dim)
-
 

@@ -137,6 +137,8 @@ class SNAKE(gym.Env):
 
     def reset(self,seed=None, **kwargs):
         super().reset(**kwargs)
+        if (seed):
+            np.random.seed(seed)
 
         self.x    = ENV_X//2
         self.y    = ENV_Y//2
